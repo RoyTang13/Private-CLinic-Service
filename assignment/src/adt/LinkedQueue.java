@@ -23,6 +23,7 @@ public class LinkedQueue<T> implements QueueADT<T>{
         }
     }
     public int test;
+    public int test2;
     private Node front;
     private Node rear;
     private int count;
