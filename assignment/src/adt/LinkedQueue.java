@@ -22,6 +22,7 @@ public class LinkedQueue<T> implements QueueADT<T>{
             this.next = null;
         }
     }
+    public int test;
     private Node front;
     private Node rear;
     private int count;
@@ -141,3 +142,4 @@ public class LinkedQueue<T> implements QueueADT<T>{
 
     
 }
+
