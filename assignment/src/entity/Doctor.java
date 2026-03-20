@@ -5,14 +5,14 @@ public class Doctor {
     private String doctorID;
     private String doctorName;
     private String phone;
-    private String profession;
+    // private String profession;
+    private String gender;
 
-
-    public Doctor(String doctorID, String doctorName,String phone, String profession) {
+    public Doctor(String doctorID, String doctorName,String phone, String gender) {
         this.doctorID = doctorID;
         this.doctorName = doctorName;
         this.phone = phone;
-        this.profession = profession;
+        this.gender = gender;
     }
     public String getDoctorID() {
         return doctorID;
@@ -33,16 +33,23 @@ public class Doctor {
         this.phone = phone;
     }
 
-    public String getProfession(){
-        return profession;
+    // public String getProfession(){
+    //     return profession;
+    // }
+
+    // public void setProfession(String profession){
+    //     this.profession = profession;
+    // }
+
+    public String getGender() {
+        return gender;
     }
 
-    public void setProfession(String profession){
-        this.profession = profession;
+    public void setGender(String gender) {
+        this.gender = gender;
     }
-
+    
     public String toString(){
-        return doctorID + " | " + doctorName + " | " +
-               profession + " | " + phone;
+        return doctorID + " | " + doctorName + " |    " + phone + " | " + gender;
     }
 }

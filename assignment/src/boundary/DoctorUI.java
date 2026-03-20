@@ -6,7 +6,9 @@ package boundary;
 
 import java.util.Scanner;
 
+import adt.ListInterface;
 import control.DoctorControl;
+import entity.DocAppointment;
 import entity.Doctor;
 
 /**
@@ -49,27 +51,95 @@ public class DoctorUI {
             return doctorID;
         }
     }
-        public void displayProfile(String doctorID, Doctor doctor) {
+
+    public void displayDoctorAppointment(ListInterface<DocAppointment> appointmentList, String doctorID) {
+        System.out.println("-------------------------------------------------------------------------");
+        System.out.println("                    MY APPOINTMENT LIST");
+        System.out.println("-------------------------------------------------------------------------");
+        System.out.printf("%-4s %-15s %-16s %-12s %-10s %-10s%n",
+                "No", "Appointment ID", "Patient Name", "Date", "Time", "Status");
+        System.out.println("-------------------------------------------------------------------------");
+
+        int no = 1;
+        boolean found = false;
+
+        for (int i = 1; i <= appointmentList.getNumberOfEntries(); i++) {
+            DocAppointment appt = appointmentList.getEntry(i);
+
+            if (appt.getDoctorID().equals(doctorID)) {
+                System.out.printf("%-4d %-15s %-16s %-12s %-10s %-10s%n",
+                        no,
+                        appt.getAppointmentID(),
+                        appt.getPatientName(),
+                        appt.getDate(),
+                        appt.getTime(),
+                        appt.getStatus());
+                no++;
+                found = true;
+            }
+        }
+
+        if (!found) {
+            System.out.println("No appointments found.");
+            }
+
+            System.out.println("-------------------------------------------------------------------------");
+    }
+
+    public int chooseAppointmentNumber() {
+        System.out.print("Select appointment number to update (0 to cancel): ");
+        return readInt();
+    }
+
+    public String chooseStatus() {
+    while (true) {
+        System.out.println("Choose new status:");
+        System.out.println("1. Pending");
+        System.out.println("2. Approved");
+        System.out.println("3. Completed");
+        System.out.println("4. Cancelled");
+        System.out.println("0. Return to previous menu");
+        System.out.print("Enter your choice: ");
+
+        int choice = readInt();
+
+        switch (choice) {
+            case 0:
+                return null;
+            case 1:
+                return "Pending";
+            case 2:
+                return "Approved";
+            case 3:
+                return "Completed";
+            case 4:
+                return "Cancelled";
+            default:
+                System.out.println("Invalid choice. Try again.\n");
+            }
+        }
+    }
+
+    public void displayProfile(String doctorID, Doctor doctor) {
         System.out.println("----- Your Current Profile -----");
         System.out.println("Doctor ID : " + doctorID);
         System.out.println("Name      : " + doctor.getDoctorName());
         System.out.println("Phone     : " + doctor.getPhone());
-        System.out.println("Profession: " + doctor.getProfession());
+        System.out.println("Gender    : " + doctor.getGender());
         System.out.println("--------------------------------");
     }
-        public int chooseUpdateField() {
+    public int chooseUpdateField() {
         System.out.println("Select which detail to update:");
         System.out.println("1. Name");
         System.out.println("2. Phone");
-        System.out.println("3. Profession");
+        System.out.println("3. Gender");
         System.out.println("0. Return to previous menu");
         System.out.print("Enter your choice: ");
         
-        int choice = input.nextInt();
-        input.nextLine(); // clear buffer
-        return choice;
+        return readInt();
     }
-        public String inputNewName(Doctor doctor){
+
+    public String inputNewName(Doctor doctor){
         System.out.println("Your Name: " + doctor.getDoctorName());
         System.out.print("Enter new name: ");
         return input.nextLine();
@@ -81,49 +151,34 @@ public class DoctorUI {
         return input.nextLine();
     }
 
-    public String inputNewProfession(Doctor doctor){
-        System.out.println("Your Profession: " + doctor.getProfession());
-        System.out.print("Enter new profession: ");
-        return input.nextLine();
-    }
-    public String chooseProfession() {
+    public String chooseGender(Doctor d) {
     while (true) {
-        System.out.println("Select your profession:");
-        System.out.println("1. General Practitioner");
-        System.out.println("2. Dentist");
-        System.out.println("3. Pediatrician");
-        System.out.println("4. Dermatologist");
-        System.out.println("5. Physiotherapist");
+        System.out.println("Choose Your Gender: ");
+        System.out.println("1.Male");
+        System.out.println("2.Female");
         System.out.println("0. Return to previous menu");
-        System.out.print("Enter your choice (0-5): ");
+        System.out.print("Enter new gender: ");
 
-        int choice = input.nextInt();
-        input.nextLine(); // clear buffer
+        int choice = readInt();
 
         switch (choice) {
             case 0:
-                return null; // Exit without updating
+                return null;
             case 1:
-                return "General Practitioner";
+                return "Male";
             case 2:
-                return "Dentist";
-            case 3:
-                return "Pediatrician";
-            case 4:
-                return "Dermatologist";
-            case 5:
-                return "Physiotherapist";
+                return "Female";
             default:
-                System.out.println("Invalid choice. Please select a number between 0 and 5.");
+                System.out.println("Invalid choice. Try again.\n");
+            }
         }
     }
-}
-    
+
+    // For doctor menu options after viewing appointments
     public int showDoctorMenu(){
         System.out.println("-------------------------------------------");
-        System.out.println("----------------Doctor Menu----------------");
+        System.out.println("                Doctor Menu                ");
         System.out.println("-------------------------------------------");
-        //show current doctor, need change after
         System.out.println("Your Doctor ID: " + doctorID);
         System.out.println("Your Name: " + doctorName);
         
@@ -131,11 +186,39 @@ public class DoctorUI {
         System.out.println("2. Update Appointment Status");
         System.out.println("3. Update Your Profile");
         System.out.println("0. Exit");
-        System.out.println("Enter your choice: ");
-        selection = input.nextInt();
-        input.nextLine(); //clear buffer
+        System.out.print("Enter your choice: ");
+        selection = readInt();
         return selection;
     }
 
-    
+    // For displaying messages to doctor after actions
+    public void displayMessage(String message) {
+        System.out.println(message);
+    }
+
+    // For doctor menu options after viewing appointments
+    public int displayOptionsAndGetChoice(String title, String... options) {
+        System.out.println(title);
+
+        for (int i = 0; i < options.length; i++) {
+            System.out.println((i + 1) + ". " + options[i]);
+        }
+
+        System.out.println("0. Return to Previous Menu");
+        System.out.print("Enter your choice: ");
+
+        return readInt();
+    }
+
+    // Helper method to read integer input with validation
+    private int readInt() {
+    while (!input.hasNextInt()) {
+        System.out.print("Invalid input. Please enter a number: ");
+        input.nextLine(); // clear wrong input
+    }
+
+    int choice = input.nextInt();
+    input.nextLine(); // clear buffer
+    return choice;
+}
 }

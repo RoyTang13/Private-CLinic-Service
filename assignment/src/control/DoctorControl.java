@@ -1,105 +1,139 @@
 package control;
 
-import adt.*;
+import adt.ListInterface;
 import boundary.DoctorUI;
+import dao.DocAppointmentDAO;
+import dao.DoctorDAO;
 import entity.DocAppointment;
 import entity.Doctor;
 
 public class DoctorControl {
-    private ListInterface<DocAppointment> appointmentList = new ArrayList<>();
-    private ListInterface<Doctor> doctorList = new ArrayList<>(); 
+    private ListInterface<DocAppointment> appointmentList;
+    private ListInterface<Doctor> doctorList;
     private DoctorUI ui = new DoctorUI();
 
-     public DoctorControl(){
-        // Sample doctor data
-        doctorList.add(new Doctor("D001", "Tang Le Yi", "0123456789", "General Practitioner"));
-        doctorList.add(new Doctor("D002", "Lim Keong", "0129876543", "Dentist"));
-        doctorList.add(new Doctor("D003", "Samuel Wong", "0131112233", "Cardiologist"));
+    private DoctorDAO doctorDAO = new DoctorDAO();
+    private DocAppointmentDAO appointmentDAO = new DocAppointmentDAO();
 
-        // Sample appointment data
-        appointmentList.add(new DocAppointment("A001","D001","Patient A","Pending"));
-        appointmentList.add(new DocAppointment("A002","D001","Patient B","Approved"));
-        appointmentList.add(new DocAppointment("A003","D002","Patient C","Pending"));
+    public DoctorControl() {
+        doctorList = doctorDAO.getAllDoctors();
+        appointmentList = appointmentDAO.getAllAppointments();
     }
 
-    // Check doctor ID and get name
-    public String getDoctorName(String doctorID){
-        for(int i = 1; i <= doctorList.getNumberOfEntries(); i++){
+    public String getDoctorName(String doctorID) {
+        for (int i = 1; i <= doctorList.getNumberOfEntries(); i++) {
             Doctor d = doctorList.getEntry(i);
-            if(d.getDoctorID().equals(doctorID)){
+            if (d.getDoctorID().equals(doctorID)) {
                 return d.getDoctorName();
             }
         }
-        return null;  // ID not found
+        return null;
     }
 
-    public boolean isValidDoctorID(String doctorID){
-        for(int i = 1; i <= doctorList.getNumberOfEntries(); i++){
-            if(doctorList.getEntry(i).getDoctorID().equals(doctorID)){
+    public boolean isValidDoctorID(String doctorID) {
+        for (int i = 1; i <= doctorList.getNumberOfEntries(); i++) {
+            if (doctorList.getEntry(i).getDoctorID().equals(doctorID)) {
                 return true;
             }
         }
         return false;
     }
 
-    private void viewAppointment(String doctorID){
-    for(int i = 1; i <= appointmentList.getNumberOfEntries(); i++){
-        DocAppointment appt = appointmentList.getEntry(i);
-        if(appt.getDoctorID().equals(doctorID)){
-            System.out.println(appt);
+    private void viewAppointment(String doctorID) {
+        ui.displayDoctorAppointment(appointmentList, doctorID);
+    }
+
+    private void updateStatus(String doctorID) {
+        while (true) {
+            ui.displayDoctorAppointment(appointmentList, doctorID);
+
+            int choice = ui.chooseAppointmentNumber();
+
+            if (choice == 0) {
+                ui.displayMessage("Returning to previous menu...");
+                return;
+            }
+
+            int displayNo = 0;
+            int actualIndex = -1;
+
+            for (int i = 1; i <= appointmentList.getNumberOfEntries(); i++) {
+                DocAppointment appt = appointmentList.getEntry(i);
+
+                if (appt.getDoctorID().equals(doctorID)) {
+                    displayNo++;
+                    if (displayNo == choice) {
+                        actualIndex = i;
+                        break;
+                    }
+                }
+            }
+
+            if (actualIndex == -1) {
+                ui.displayMessage("Invalid appointment number.");
+                continue;
+            }
+
+            DocAppointment selectedAppt = appointmentList.getEntry(actualIndex);
+
+            String newStatus = ui.chooseStatus();
+
+            if (newStatus == null) {
+                ui.displayMessage("Status update cancelled.");
+                continue;
+            }
+
+            selectedAppt.setStatus(newStatus);
+            appointmentList.replace(actualIndex, selectedAppt);
+
+            ui.displayMessage("Status updated successfully!");
+            ui.displayDoctorAppointment(appointmentList, doctorID);
+
+            int nextChoice = ui.displayOptionsAndGetChoice(
+                "What would you like to do next?",
+                "Continue Updating Appointment Status"
+            );
+
+            if (nextChoice == 0) {
+                ui.displayMessage("Returning to previous menu...");
+                return;
+            }
         }
     }
-}
 
-    private void updateStatus(String doctorID){
-    for(int i = 1; i <= appointmentList.getNumberOfEntries(); i++){
-        DocAppointment appt = appointmentList.getEntry(i);
-
-        if(appt.getDoctorID().equals(doctorID)){
-            System.out.println("Current Appointment: " + appt);
-            System.out.print("Enter new status: ");
-            String status = new java.util.Scanner(System.in).nextLine();
-            appt.setStatus(status);
-            appointmentList.replace(i, appt);
-            System.out.println("Status updated.");
-        }
-    }
-    }
-    private void updateProfile(String doctorID){
-
-        for(int i = 1; i <= doctorList.getNumberOfEntries(); i++){
+    private void updateProfile(String doctorID) {
+        for (int i = 1; i <= doctorList.getNumberOfEntries(); i++) {
             Doctor d = doctorList.getEntry(i);
 
-            if(d.getDoctorID().equals(doctorID)){
-
+            if (d.getDoctorID().equals(doctorID)) {
                 boolean continueUpdating = true;
 
-                while(continueUpdating){
-                    // Display Profile
+                while (continueUpdating) {
                     ui.displayProfile(doctorID, d);
-
                     int fieldChoice = ui.chooseUpdateField();
 
-                    switch(fieldChoice){
-                        case 1: // Name
+                    switch (fieldChoice) {
+                        case 1:
                             String newName = ui.inputNewName(d);
                             d.setDoctorName(newName);
                             System.out.println("Name updated successfully!");
                             break;
 
-                        case 2: // Phone
+                        case 2:
                             String newPhone = ui.inputNewPhone(d);
                             d.setPhone(newPhone);
                             System.out.println("Phone updated successfully!");
                             break;
 
-                        case 3: // Profession
-                            String newProf = ui.chooseProfession();
-                            d.setProfession(newProf);
-                            System.out.println("Profession updated successfully!");
+                        case 3:
+                            String newGender = ui.chooseGender(d);
+                            if (newGender != null) {
+                                d.setGender(newGender);
+                                System.out.println("Gender updated successfully!");
+                            }
                             break;
 
-                        case 0: // Exit updating
+                        case 0:
                             continueUpdating = false;
                             System.out.println("Returning to previous menu...");
                             break;
@@ -109,34 +143,47 @@ public class DoctorControl {
                             break;
                     }
 
-                    // Update in ADT
                     doctorList.replace(i, d);
                 }
-
-                break; // profile found, exit loop
+                break;
             }
         }
     }
+
     public void runDoctorModule() {
-        String doctorID = ui.enterDoctorID(this);  
+        String doctorID = ui.enterDoctorID(this);
         int choice;
-            do {
-                choice = ui.showDoctorMenu();
-                switch(choice){
-            case 1:
-                viewAppointment(doctorID);
-                break;
+        do {
+            choice = ui.showDoctorMenu();
+            switch (choice) {
+                case 1:
+                    int nextChoice;
+                    do {
+                        viewAppointment(doctorID); 
+                        nextChoice = ui.displayOptionsAndGetChoice(
+                            "What would you like to do next?",
+                            "Update Appointment Status"
+                        );
 
-            case 2:
-                updateStatus(doctorID);
-                break;
+                        if (nextChoice == 1) {
+                            updateStatus(doctorID);
+                            break;
+                        } else if (nextChoice == 0) {
+                            break;
+                        } else {
+                            ui.displayMessage("Invalid choice. Try again.\n");
+                        }
 
-            case 3:
-                updateProfile(doctorID); 
-                break;
+                    } while (true);
+
+                    break;
+                case 2:
+                    updateStatus(doctorID);
+                    break;
+                case 3:
+                    updateProfile(doctorID);
+                    break;
             }
-        } while(choice != 0);
+        } while (choice != 0);
     }
-
-
 }
