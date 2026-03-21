@@ -1,6 +1,7 @@
 package adt;
 
 import java.io.Serializable;
+
 /**
  *
  * @author Lim SiYu， Lee Seng Wai, Tang Le Yi, Ivan Wai Kim Hou
@@ -34,9 +35,9 @@ public class ArrayList<T> implements ListInterface<T>, Serializable {
     boolean isSuccessful = true;
 
     if ((newPosition >= 1) && (newPosition <= numberOfEntries + 1)) {
-        makeRoom(newPosition);
-        array[newPosition - 1] = newEntry;
-        numberOfEntries++;
+      makeRoom(newPosition);
+      array[newPosition - 1] = newEntry;
+      numberOfEntries++;
     } else {
       isSuccessful = false;
     }
@@ -134,6 +135,7 @@ public class ArrayList<T> implements ListInterface<T>, Serializable {
       array[index + 1] = array[index];
     }
   }
+
   private void removeGap(int givenPosition) {
     int removedIndex = givenPosition - 1;
     int lastIndex = numberOfEntries - 1;

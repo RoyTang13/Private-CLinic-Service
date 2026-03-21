@@ -7,14 +7,16 @@ public class DocAppointment {
     private String status;
     private String date;
     private String time;
+    private int queueNo;
 
-    public DocAppointment(String appointmentID, String doctorID, String patientName, String status, String date, String time) {
+    public DocAppointment(String appointmentID, String doctorID, String patientName, String status, String date, String time, int queueNo) {
         this.appointmentID = appointmentID;
         this.doctorID = doctorID;
         this.patientName = patientName;
         this.status = status;
         this.date = date;
         this.time = time;
+        this.queueNo = queueNo;
     }
 
     public String getAppointmentID() {
@@ -63,6 +65,14 @@ public class DocAppointment {
 
     public void setTime(String time) {
         this.time = time;
+    }
+
+    public int getQueueNo() {
+        return queueNo;
+    }
+
+    public void setQueueNo(int queueNo) {
+        this.queueNo = queueNo;
     }
 
     @Override
