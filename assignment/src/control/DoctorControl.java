@@ -52,6 +52,7 @@ public class DoctorControl {
 
     private void updateStatusByCategory(String doctorID, String status) {
     while (true) {
+        refreshAppointments(); //check latest txt file
         ui.displayPatientsTable(appointmentList, doctorID, status);
 
         int actionChoice = ui.statusTableActionMenu();
@@ -176,10 +177,6 @@ public class DoctorControl {
         }
     }
 
-    private void viewByStatus(String doctorID, String status) {
-        ui.displayPatientsTable(appointmentList, doctorID, status);
-        }
-
     private void refreshAppointments() {
         appointmentList = appointmentDAO.getAllAppointments();
     }
@@ -230,6 +227,8 @@ public class DoctorControl {
                     ui.displayMessage("Returning to main menu...");
                     return;// back to Doctor Menu
                 }
+            case 2:
+                continue;
                 
             case 0:
                 ui.displayMessage("Returning to previous menu...");
@@ -332,6 +331,7 @@ public class DoctorControl {
         int cancelledCount = 0;
         int totalCount = 0;
 
+        calculateTotalReport(); //refresh appointment list before calculate report
         for (int i = 1; i <= appointmentList.getNumberOfEntries(); i++) {
             DocAppointment appt = appointmentList.getEntry(i);
 
