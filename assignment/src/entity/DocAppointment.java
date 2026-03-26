@@ -11,15 +11,15 @@ public class DocAppointment {
     private int queueNo;
     
 
-    public DocAppointment(String appointmentID, String doctorID, String patientName, String status, String date, String time, int queueNo) {
-        this.appointmentID = appointmentID;
+    public DocAppointment(String id, String doctorID, String patientName, String status, String date, String time, int queueNo, String feedback) {
+        this.appointmentID = id;
         this.doctorID = doctorID;
         this.patientName = patientName;
         this.status = status;
-        this.doctorFeedback = "";
         this.date = date;
         this.time = time;
         this.queueNo = queueNo;
+        this.doctorFeedback = feedback;
     }
 
     public String getAppointmentID() {

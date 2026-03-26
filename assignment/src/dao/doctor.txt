@@ -1,0 +1,3 @@
+D001|Tang Le Yi|0123456789|Male
+D002|Chang Kavin|0129876543|Female
+D003|Samuel Wong|0131112233|Male

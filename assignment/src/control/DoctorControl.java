@@ -39,6 +39,17 @@ public class DoctorControl {
         return false;
     }
 
+// Debug Use only for test file exits
+//     public boolean isValidDoctorID(String doctorID) {
+//     for (int i = 1; i <= doctorList.getNumberOfEntries(); i++) {
+//         System.out.println("Comparing with: " + doctorList.getEntry(i).getDoctorID());
+//         if (doctorList.getEntry(i).getDoctorID().equals(doctorID.trim())) {
+//             return true;
+//         }
+//     }
+//     return false;
+// }
+
     private void updateStatusByCategory(String doctorID, String status) {
     while (true) {
         ui.displayPatientsTable(appointmentList, doctorID, status);
@@ -96,6 +107,7 @@ public class DoctorControl {
         String feedback = ui.inputDoctorFeedback();
         selectedAppt.setDoctorFeedback(feedback);
         appointmentList.replace(actualIndex, selectedAppt);
+        appointmentDAO.saveAppointments(appointmentList);
 
         ui.displayMessage("Patient status updated successfully!");
         ui.displayPatientsTable(appointmentList, doctorID, status);
@@ -157,19 +169,25 @@ public class DoctorControl {
                     }
 
                     doctorList.replace(i, d);
+                    doctorDAO.saveDoctors(doctorList);  //save file to txt
                 }
                 break;
             }
         }
     }
 
-        private void viewByStatus(String doctorID, String status) {
+    private void viewByStatus(String doctorID, String status) {
         ui.displayPatientsTable(appointmentList, doctorID, status);
         }
+
+    private void refreshAppointments() {
+        appointmentList = appointmentDAO.getAllAppointments();
+    }
 
 
     private void callNextPatient(String doctorID) {
     while (true) {
+        refreshAppointments(); //check latest txt file
         DocAppointment nextPatient = getNextPatient(doctorID);
         ui.displayNextPatient(nextPatient);
 
@@ -196,6 +214,7 @@ public class DoctorControl {
                 for (int i = 1; i <= appointmentList.getNumberOfEntries(); i++) {
                     if (appointmentList.getEntry(i) == nextPatient) {
                         appointmentList.replace(i, nextPatient);
+                        appointmentDAO.saveAppointments(appointmentList); // save to file
                         break;
                     }
                 }
@@ -212,13 +231,6 @@ public class DoctorControl {
                     return;// back to Doctor Menu
                 }
                 
-            case 2:
-                // remove current patient from "current waiting" by changing status if needed
-                // or just continue to next pending patient
-                // if current stays Pending, it will show same patient again
-                // so usually this should only be used after status already changed
-                return;
-
             case 0:
                 ui.displayMessage("Returning to previous menu...");
                 return;
@@ -247,6 +259,7 @@ public class DoctorControl {
             return nextPatient;
         }
     private void displayAllReport(String doctorID) {
+        refreshAppointments(); //check latest txt file
         ui.displayReportTable(appointmentList, doctorID);
     }
 
@@ -254,7 +267,8 @@ public class DoctorControl {
         int choice;
 
         do {
-            //display report first
+            refreshAppointments(); //check latest txt file
+            //display all report before searching
             ui.displayReportTable(appointmentList, doctorID);
             choice = ui.searchReportMenu();
 
