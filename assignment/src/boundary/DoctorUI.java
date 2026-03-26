@@ -96,6 +96,18 @@ public class DoctorUI {
         }
     }
 
+    public void displayUpdatedAppointmentDetails(DocAppointment appt, String feedback) {
+        System.out.println("==============================================================");
+        System.out.println("              UPDATED APPOINTMENT DETAILS");
+        System.out.println("==============================================================");
+        System.out.println("Appointment ID   : " + appt.getAppointmentID());
+        System.out.println("Patient Name     : " + appt.getPatientName());
+        System.out.println("Queue Number     : " + appt.getQueueNo());
+        System.out.println("Updated Status   : " + appt.getStatus());
+        System.out.println("Doctor Feedback  : " + feedback);
+        System.out.println("==============================================================");
+    }
+
     public void displayDoctorAppointment(ListInterface<DocAppointment> appointmentList, String doctorID) {
         System.out.println("MY APPOINTMENT LIST");
         System.out.println("========================================");
@@ -224,11 +236,9 @@ public void displayPatientsTable(ListInterface<DocAppointment> appointmentList, 
 
     public String chooseStatus() {
     while (true) {
-        System.out.println("Choose new status:");
-        System.out.println("1. Pending");
-        System.out.println("2. Follow Up");
-        System.out.println("3. Completed");
-        System.out.println("4. Cancelled");
+        System.out.println("Edit Patient status:");
+        System.out.println("1. Completed");
+        System.out.println("2. Cancelled");
         System.out.println("0. Return to previous menu");
         System.out.print("Enter your choice: ");
 
@@ -238,12 +248,8 @@ public void displayPatientsTable(ListInterface<DocAppointment> appointmentList, 
             case 0:
                 return null;
             case 1:
-                return "Pending";
-            case 2:
-                return "Follow Up";
-            case 3:
                 return "Completed";
-            case 4:
+            case 2:
                 return "Cancelled";
             default:
                 System.out.println("Invalid choice. Try again.\n");
@@ -254,19 +260,49 @@ public void displayPatientsTable(ListInterface<DocAppointment> appointmentList, 
     public int currentPatientActionMenu() {
         System.out.println("What would you like to do next?");
         System.out.println("1. Edit Patient Status");
+        System.out.println("2. Pass to Next Patient");
         System.out.println("0. Return to Previous Menu");
         System.out.print("Enter your choice: ");
         return readInt();
     }
 
     public int afterStatusUpdatedMenu() {
-        System.out.println("     What would you like to do next?");
+        System.out.println("What would you like to do next?");
         System.out.println("1. Pass to Next Patient");
         System.out.println("0. Return to Previous Menu");
+
         System.out.print("Enter your choice: ");
         return readInt();
     }
 
+    public String inputDoctorFeedback() {
+    System.out.print("Enter doctor feedback: ");
+    return input.nextLine();
+}
+    public int statusTableActionMenu() {
+        System.out.println("========================================");
+        System.out.println("     What would you like to do next?");
+        System.out.println("========================================");
+        System.out.println("1. Edit Patient Status");
+        System.out.println("0. Return to Previous Menu");
+        System.out.println("========================================");
+        System.out.print("Enter your choice: ");
+        return readInt();
+    }
+
+    public int continueUpdateMenu() {
+        System.out.println("========================================");
+        System.out.println("     What would you like to do next?");
+        System.out.println("========================================");
+        System.out.println("1. Continue Updating Appointment Status");
+        System.out.println("0. Return to Previous Menu");
+        System.out.println("========================================");
+        System.out.print("Enter your choice: ");
+        return readInt();
+    }
+
+    
+    //VIEW PROFILE & UPDATE PROFILE METHODS
     public void displayProfile(String doctorID, Doctor doctor) {
         System.out.println("----- Your Current Profile -----");
         System.out.println("Doctor ID : " + doctorID);
@@ -321,6 +357,181 @@ public void displayPatientsTable(ListInterface<DocAppointment> appointmentList, 
         }
     }
 
+    //Report Module
+    public int reportMenu() {
+        System.out.println("-------------------------------------------");
+        System.out.println("               MY REPORT MENU              ");
+        System.out.println("-------------------------------------------");
+        System.out.println("1. Display All Report");
+        System.out.println("2. Search Report");
+        System.out.println("3. Total Appointment Report");
+        System.out.println("0. Return to Previous Menu");
+        System.out.print("Enter your choice: ");
+
+        return readInt();
+    }
+
+    //Display all report (case 1)
+    public void displayReportTable(ListInterface<DocAppointment> appointmentList, String doctorID) {
+        System.out.println("==========================================================================");
+        System.out.println("                         ALL APPOINTMENT REPORT");
+        System.out.println("==========================================================================");
+
+        System.out.printf("%-4s %-18s %-12s %-12s %-20s%n",
+                "No", "Patient Name", "Status", "Appt ID", "Doctor Feedback");
+
+        System.out.println("--------------------------------------------------------------------------");
+
+        int no = 1;
+        boolean found = false;
+
+        for (int i = 1; i <= appointmentList.getNumberOfEntries(); i++) {
+            DocAppointment appt = appointmentList.getEntry(i);
+
+            if (appt.getDoctorID().equals(doctorID)) {
+                String feedback = appt.getDoctorFeedback();
+
+                if (feedback == null || feedback.trim().isEmpty()) {
+                    feedback = "-";
+                }
+
+                System.out.printf("%-4d %-18s %-12s %-12s %-20s%n",
+                        no,
+                        appt.getPatientName(),
+                        appt.getStatus(),
+                        appt.getAppointmentID(),
+                        feedback);
+
+                no++;
+                found = true;
+            }
+        }
+
+        if (!found) {
+            System.out.println("No appointments found.");
+        }
+
+        System.out.println("==========================================================================");
+    }
+
+    //Search Report(case 2)
+    public int searchReportMenu() {
+        System.out.println("-------------------------------------------");
+        System.out.println("              SEARCH REPORT MENU           ");
+        System.out.println("-------------------------------------------");
+        System.out.println("1. Search by Patient Name");
+        System.out.println("2. Search by Status");
+        System.out.println("3. Search by Appointment ID");
+        System.out.println("0. Return to Previous Menu");
+        System.out.print("Enter your choice: ");
+
+        return readInt();
+    }
+
+    public String inputSearchKeyword(String prompt) {
+        System.out.print(prompt);
+        return input.nextLine();
+    }
+
+    public void displaySearchResultTable(ListInterface<DocAppointment> appointmentList, String doctorID, String type, String keyword) {
+        System.out.println("==========================================================================");
+        System.out.println("                     SEARCH RESULT");
+        System.out.println("==========================================================================");
+
+        System.out.printf("%-4s %-18s %-12s %-12s %-20s%n",
+                "No", "Patient Name", "Status", "Appt ID", "Doctor Feedback");
+
+        System.out.println("--------------------------------------------------------------------------");
+
+        int no = 1;
+        boolean found = false;
+
+        for (int i = 1; i <= appointmentList.getNumberOfEntries(); i++) {
+            DocAppointment appt = appointmentList.getEntry(i);
+
+            if (!appt.getDoctorID().equals(doctorID)) continue;
+
+            boolean match = false;
+
+            switch (type) {
+                case "name":
+                    match = appt.getPatientName().toLowerCase().contains(keyword.toLowerCase());
+                    break;
+
+                case "status":
+                    match = appt.getStatus().equalsIgnoreCase(keyword);
+                    break;
+
+                case "id":
+                    match = appt.getAppointmentID().equalsIgnoreCase(keyword);
+                    break;
+            }
+
+            if (match) {
+                String feedback = appt.getDoctorFeedback();
+                if (feedback == null || feedback.trim().isEmpty()) {
+                    feedback = "-";
+                }
+
+                System.out.printf("%-4d %-18s %-12s %-12s %-20s%n",
+                        no,
+                        appt.getPatientName(),
+                        appt.getStatus(),
+                        appt.getAppointmentID(),
+                        feedback);
+
+                no++;
+                found = true;
+            }
+        }
+
+        if (!found) {
+            System.out.println("No matching result found.");
+        }
+
+        System.out.println("==========================================================================");
+    }
+
+    public String chooseSearchStatus() {
+        while (true) {
+            System.out.println("Choose status to search:");
+            System.out.println("1. Pending");
+            System.out.println("2. Completed");
+            System.out.println("3. Cancelled");
+            System.out.println("0. Return to previous menu");
+            System.out.print("Enter your choice: ");
+
+            int choice = readInt();
+
+            switch (choice) {
+                case 0:
+                    return null;
+                case 1:
+                    return "Pending";
+                case 2:
+                    return "Completed";
+                case 3:
+                    return "Cancelled";
+                default:
+                    System.out.println("Invalid choice. Try again.\n");
+            }
+        }
+    }
+
+    //calculate total report case 3)
+    public void displayTotalAppointmentReport(int pendingCount, int completedCount, int cancelledCount, int totalCount) {
+        System.out.println("==================================================");
+        System.out.println("            TOTAL APPOINTMENT REPORT");
+        System.out.println("==================================================");
+        System.out.println("Total Pending Appointments   : " + pendingCount);
+        System.out.println("Total Completed Appointments : " + completedCount);
+        System.out.println("Total Cancelled Appointments : " + cancelledCount);
+        System.out.println("--------------------------------------------------");
+        System.out.println("Grand Total Appointments     : " + totalCount);
+        System.out.println("==================================================");
+    }
+
+
     // For doctor menu options after viewing appointments
     public int showDoctorMenu(){
         System.out.println("-------------------------------------------");
@@ -329,8 +540,8 @@ public void displayPatientsTable(ListInterface<DocAppointment> appointmentList, 
         System.out.println("Your Doctor ID: " + doctorID);
         System.out.println("Your Name: " + doctorName);
         
-        System.out.println("1. View My Appointment");
-        System.out.println("2. Update Appointment Status");
+        System.out.println("1. View and Manage My Appointment");
+        System.out.println("2. View My Report");
         System.out.println("3. Update Your Profile");
         System.out.println("0. Exit");
         System.out.print("Enter your choice: ");
@@ -344,7 +555,7 @@ public void displayPatientsTable(ListInterface<DocAppointment> appointmentList, 
     }
 
     public int displayOptionsAndGetChoice(String title, String... options) {
-        System.out.println("       " + title);
+        System.out.println(title);
 
         for (int i = 0; i < options.length; i++) {
             System.out.println((i + 1) + ". " + options[i]);

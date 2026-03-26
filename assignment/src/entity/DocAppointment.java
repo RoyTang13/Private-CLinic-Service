@@ -5,15 +5,18 @@ public class DocAppointment {
     private String doctorID;
     private String patientName;
     private String status;
+    private String doctorFeedback;
     private String date;
     private String time;
     private int queueNo;
+    
 
     public DocAppointment(String appointmentID, String doctorID, String patientName, String status, String date, String time, int queueNo) {
         this.appointmentID = appointmentID;
         this.doctorID = doctorID;
         this.patientName = patientName;
         this.status = status;
+        this.doctorFeedback = "";
         this.date = date;
         this.time = time;
         this.queueNo = queueNo;
@@ -49,6 +52,14 @@ public class DocAppointment {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getDoctorFeedback() {
+        return doctorFeedback;
+    }
+
+    public void setDoctorFeedback(String doctorFeedback) {
+        this.doctorFeedback = doctorFeedback;
     }
 
     public String getDate() {

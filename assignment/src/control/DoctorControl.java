@@ -39,63 +39,80 @@ public class DoctorControl {
         return false;
     }
 
-    private void updateStatus(String doctorID) {
-        while (true) {
-            ui.displayDoctorAppointment(appointmentList, doctorID);
+    private void updateStatusByCategory(String doctorID, String status) {
+    while (true) {
+        ui.displayPatientsTable(appointmentList, doctorID, status);
 
-            int choice = ui.chooseAppointmentNumber();
+        int actionChoice = ui.statusTableActionMenu();
 
-            if (choice == 0) {
-                ui.displayMessage("Returning to previous menu...");
-                return;
-            }
+        if (actionChoice == 0) {
+            ui.displayMessage("Returning to previous menu...");
+            return;
+        }
 
-            int displayNo = 0;
-            int actualIndex = -1;
+        if (actionChoice != 1) {
+            ui.displayMessage("Invalid choice. Try again.");
+            continue;
+        }
 
-            for (int i = 1; i <= appointmentList.getNumberOfEntries(); i++) {
-                DocAppointment appt = appointmentList.getEntry(i);
+        int choice = ui.chooseAppointmentNumber();
 
-                if (appt.getDoctorID().equals(doctorID) && appt.getStatus().equalsIgnoreCase("Pending")) {
-                    displayNo++;
-                    if (displayNo == choice) {
-                        actualIndex = i;
-                        break;
-                    }
+        if (choice == 0) {
+            ui.displayMessage("Returning to previous menu...");
+            return;
+        }
+
+        int displayNo = 0;
+        int actualIndex = -1;
+
+        for (int i = 1; i <= appointmentList.getNumberOfEntries(); i++) {
+            DocAppointment appt = appointmentList.getEntry(i);
+
+            if (appt.getDoctorID().equals(doctorID)
+                    && appt.getStatus().equalsIgnoreCase(status)) {
+                displayNo++;
+                if (displayNo == choice) {
+                    actualIndex = i;
+                    break;
                 }
             }
+        }
 
-            if (actualIndex == -1) {
-                ui.displayMessage("Invalid appointment number.");
-                continue;
-            }
+        if (actualIndex == -1) {
+            ui.displayMessage("Invalid appointment number.");
+            continue;
+        }
 
-            DocAppointment selectedAppt = appointmentList.getEntry(actualIndex);
+        DocAppointment selectedAppt = appointmentList.getEntry(actualIndex);
 
-            String newStatus = ui.chooseStatus();
+        String newStatus = ui.chooseStatus();
 
-            if (newStatus == null) {
-                ui.displayMessage("Status update cancelled.");
-                continue;
-            }
+        if (newStatus == null) {
+            ui.displayMessage("Status update cancelled.");
+            continue;
+        }
 
-            selectedAppt.setStatus(newStatus);
-            appointmentList.replace(actualIndex, selectedAppt);
+        selectedAppt.setStatus(newStatus);
+        String feedback = ui.inputDoctorFeedback();
+        selectedAppt.setDoctorFeedback(feedback);
+        appointmentList.replace(actualIndex, selectedAppt);
 
-            ui.displayMessage("Status updated successfully!");
-            ui.displayDoctorAppointment(appointmentList, doctorID);
+        ui.displayMessage("Patient status updated successfully!");
+        ui.displayPatientsTable(appointmentList, doctorID, status);
 
-            int nextChoice = ui.displayOptionsAndGetChoice(
-                "What would you like to do next?",
-                "Continue Updating Appointment Status"
-            );
+        int nextChoice = ui.continueUpdateMenu();
 
-            if (nextChoice == 0) {
-                ui.displayMessage("Returning to previous menu...");
-                return;
-            }
+        if (nextChoice == 0) {
+            ui.displayMessage("Returning to previous menu...");
+            return;
+        } else if (nextChoice == 1) {
+            continue;
+        } else {
+            ui.displayMessage("Invalid choice. Returning to previous menu...");
+            return;
         }
     }
+}
 
     private void updateProfile(String doctorID) {
         for (int i = 1; i <= doctorList.getNumberOfEntries(); i++) {
@@ -151,59 +168,66 @@ public class DoctorControl {
         }
 
 
-       private void callNextPatient(String doctorID) {
-            while (true) {
-                DocAppointment nextPatient = getNextPatient(doctorID);
-                ui.displayNextPatient(nextPatient);
+    private void callNextPatient(String doctorID) {
+    while (true) {
+        DocAppointment nextPatient = getNextPatient(doctorID);
+        ui.displayNextPatient(nextPatient);
 
-                if (nextPatient == null) {
-                    ui.pressEnterToContinue();
-                    return;
-                }
-
-                int choice = ui.currentPatientActionMenu();
-
-                if (choice == 0) {
-                    ui.displayMessage("Returning to previous menu...");
-                    return;
-                }
-
-                if (choice == 1) {
-                    String newStatus = ui.chooseStatus();
-
-                    if (newStatus == null) {
-                        ui.displayMessage("Status update cancelled.");
-                        continue;
-                    }
-
-                    nextPatient.setStatus(newStatus);
-
-                    for (int i = 1; i <= appointmentList.getNumberOfEntries(); i++) {
-                        if (appointmentList.getEntry(i) == nextPatient) {
-                            appointmentList.replace(i, nextPatient);
-                            break;
-                        }
-                    }
-
-                    ui.displayMessage("Patient status updated successfully!");
-                    ui.displayNextPatient(nextPatient);
-
-                    int nextChoice = ui.afterStatusUpdatedMenu();
-
-                    if (nextChoice == 0) {
-                        ui.displayMessage("Returning to previous menu...");
-                        return;
-                    } else if (nextChoice == 1) {
-                        continue;
-                    } else {
-                        ui.displayMessage("Invalid choice. Returning to previous menu...");
-                        return;
-                    }
-                } else {
-                    ui.displayMessage("Invalid choice. Try again.");
-                }
-            }
+        if (nextPatient == null) {
+            ui.pressEnterToContinue();
+            return;
         }
+
+        int choice = ui.currentPatientActionMenu();
+
+        switch (choice) {
+            case 1:
+                String newStatus = ui.chooseStatus();
+
+                if (newStatus == null) {
+                    ui.displayMessage("Status update cancelled.");
+                    continue;
+                }
+                String feedback = ui.inputDoctorFeedback();
+
+                nextPatient.setStatus(newStatus);
+                 nextPatient.setDoctorFeedback(feedback); 
+
+                for (int i = 1; i <= appointmentList.getNumberOfEntries(); i++) {
+                    if (appointmentList.getEntry(i) == nextPatient) {
+                        appointmentList.replace(i, nextPatient);
+                        break;
+                    }
+                }
+
+                ui.displayMessage("Patient status updated successfully!");
+                ui.displayUpdatedAppointmentDetails(nextPatient, feedback);
+
+                int nextAction = ui.afterStatusUpdatedMenu();
+
+                if (nextAction == 1) {
+                    continue; // show next patient
+                } else {
+                    ui.displayMessage("Returning to main menu...");
+                    return;// back to Doctor Menu
+                }
+                
+            case 2:
+                // remove current patient from "current waiting" by changing status if needed
+                // or just continue to next pending patient
+                // if current stays Pending, it will show same patient again
+                // so usually this should only be used after status already changed
+                return;
+
+            case 0:
+                ui.displayMessage("Returning to previous menu...");
+                return;
+
+            default:
+                ui.displayMessage("Invalid choice. Try again.");    
+        }
+    }
+}
 
         private DocAppointment getNextPatient(String doctorID) {
             DocAppointment nextPatient = null;
@@ -222,6 +246,96 @@ public class DoctorControl {
 
             return nextPatient;
         }
+    private void displayAllReport(String doctorID) {
+        ui.displayReportTable(appointmentList, doctorID);
+    }
+
+    private void searchReport(String doctorID) {
+        int choice;
+
+        do {
+            //display report first
+            ui.displayReportTable(appointmentList, doctorID);
+            choice = ui.searchReportMenu();
+
+            switch (choice) {
+                case 1:
+                    searchByPatientName(doctorID);
+                    ui.pressEnterToContinue();
+                    break;
+
+                case 2:
+                    searchByStatus(doctorID);
+                    ui.pressEnterToContinue();
+                    break;
+
+                case 3:
+                    searchByAppointmentID(doctorID);
+                    ui.pressEnterToContinue();
+                    break;
+
+                case 0:
+                    ui.displayMessage("Returning to previous menu...");
+                    break;
+
+                default:
+                    ui.displayMessage("Invalid choice. Try again.");
+            }
+
+        } while (choice != 0);
+    }
+
+    //Search Patient Name in Report
+    private void searchByPatientName(String doctorID) {
+        String keyword = ui.inputSearchKeyword("Enter patient name: ");
+
+        ui.displaySearchResultTable(appointmentList, doctorID, "name", keyword);
+    }
+
+    //Search by status in report
+    private void searchByStatus(String doctorID) {
+        String status = ui.chooseSearchStatus();
+
+        if (status == null) {
+            ui.displayMessage("Search cancelled.");
+            return;
+        }
+
+        ui.displaySearchResultTable(appointmentList, doctorID, "status", status);
+    }
+
+    //Search with Appointment ID
+    private void searchByAppointmentID(String doctorID) {
+        String id = ui.inputSearchKeyword("Enter Appointment ID: ");
+
+        ui.displaySearchResultTable(appointmentList, doctorID, "id", id);
+    }
+
+    //calculate total report (case 3)
+    private void calculateTotalReport(String doctorID) {
+        int pendingCount = 0;
+        int completedCount = 0;
+        int cancelledCount = 0;
+        int totalCount = 0;
+
+        for (int i = 1; i <= appointmentList.getNumberOfEntries(); i++) {
+            DocAppointment appt = appointmentList.getEntry(i);
+
+            if (appt.getDoctorID().equals(doctorID)) {
+                totalCount++;
+
+                if (appt.getStatus().equalsIgnoreCase("Pending")) {
+                    pendingCount++;
+                } else if (appt.getStatus().equalsIgnoreCase("Completed")) {
+                    completedCount++;
+                } else if (appt.getStatus().equalsIgnoreCase("Cancelled")) {
+                    cancelledCount++;
+                }
+            }
+        }
+
+        ui.displayTotalAppointmentReport(pendingCount, completedCount, cancelledCount, totalCount);
+    }
 
     public void runDoctorModule() {
         String doctorID = ui.enterDoctorID(this);
@@ -232,29 +346,27 @@ public class DoctorControl {
 
             switch (choice) {
                 case 1:
-                    int subChoice;
+                    callNextPatient(doctorID);
+                    break;
+
+                case 2:
+                    int reportChoice;
                     do {
-                        subChoice = ui.viewAppointmentMenu();
+                        reportChoice = ui.reportMenu();
 
-                        switch (subChoice) {
-                            case 1:
-                                callNextPatient(doctorID);
+                        switch (reportChoice) {
+                            case 1:// Display all reports
+                            displayAllReport(doctorID);
+                            ui.pressEnterToContinue();
+                            break;
+
+                            case 2: //Search report
+                                searchReport(doctorID);
                                 break;
 
-                            case 2:
-                                viewByStatus(doctorID, "Pending");
-                                break;
-
-                            case 3:
-                                viewByStatus(doctorID, "Follow Up");
-                                break;
-
-                            case 4:
-                                viewByStatus(doctorID, "Completed");
-                                break;
-
-                            case 5:
-                                viewByStatus(doctorID, "Cancelled");
+                            case 3: //calculate total appointment report
+                                calculateTotalReport(doctorID);
+                                ui.pressEnterToContinue();
                                 break;
 
                             case 0:
@@ -264,12 +376,7 @@ public class DoctorControl {
                             default:
                                 ui.displayMessage("Invalid choice. Try again.");
                         }
-
-                    } while (subChoice != 0);
-                    break;
-
-                case 2:
-                    updateStatus(doctorID);
+                    } while (reportChoice != 0);
                     break;
 
                 case 3:
