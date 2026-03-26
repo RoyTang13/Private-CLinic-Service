@@ -43,7 +43,7 @@ public class DoctorControl {
 //     public boolean isValidDoctorID(String doctorID) {
 //     for (int i = 1; i <= doctorList.getNumberOfEntries(); i++) {
 //         System.out.println("Comparing with: " + doctorList.getEntry(i).getDoctorID());
-//         if (doctorList.getEntry(i).getDoctorID().equals(doctorID.trim())) {
+//        if (doctorList.getEntry(i).getDoctorID().equals(doctorID.trim())) {
 //             return true;
 //         }
 //     }

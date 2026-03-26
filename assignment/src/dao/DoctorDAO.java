@@ -8,7 +8,7 @@ import java.util.Scanner;
 
 public class DoctorDAO {
 
-    private final String FILE_NAME = "assignment/src/dao/doctor.txt";
+    private final String FILE_NAME = "src/dao/doctor.txt";
 
     // Save all doctors to file
     public void saveDoctors(ListInterface<Doctor> doctorList) {
@@ -55,21 +55,21 @@ public class DoctorDAO {
 //     public ListInterface<Doctor> getAllDoctors() {
 //     ListInterface<Doctor> doctorList = new ArrayList<>();
 //     File file = new File(FILE_NAME);
-
+//
 //     System.out.println("Looking for file at: " + file.getAbsolutePath());
 //     System.out.println("File exists: " + file.exists());
-
+//
 //     if (!file.exists()) {
-//         return doctorList;
+//        return doctorList;
 //     }
-
+//
 //     try (Scanner fileScanner = new Scanner(file)) {
 //         while (fileScanner.hasNextLine()) {
 //             String line = fileScanner.nextLine();
 //             System.out.println("Read line: " + line);
-
+//
 //             String[] parts = line.split("\\|");
-
+//
 //             if (parts.length == 4) {
 //                 doctorList.add(new Doctor(parts[0].trim(), parts[1].trim(), parts[2].trim(), parts[3].trim()));
 //                 System.out.println("Loaded Doctor ID: " + parts[0].trim());
@@ -80,7 +80,7 @@ public class DoctorDAO {
 //     } catch (FileNotFoundException e) {
 //         System.err.println("File not found: " + e.getMessage());
 //     }
-
+//
 //     return doctorList;
 // }
 }

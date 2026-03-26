@@ -8,7 +8,7 @@ import java.util.Scanner;
 
 public class DocAppointmentDAO {
 
-    private final String FILE_NAME = "assignment/src/dao/appointment.txt";
+    private final String FILE_NAME = "src/dao/appointment.txt";
 
     // Save all appointments to file
     public void saveAppointments(ListInterface<DocAppointment> appointmentList) {

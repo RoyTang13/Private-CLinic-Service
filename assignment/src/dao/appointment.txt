@@ -9,13 +9,11 @@ A008|D001|Amira Sofea|Cancelled|2026-03-26|02:00 PM|8|Rescheduled
 A009|D001|Kevin Tan|Cancelled|2026-03-27|03:30 PM|9|Cough medicine given
 A010|D001|Alicia Wong|Completed|2026-03-27|04:30 PM|10|Minor infection treated
 A011|D001|Hafiz Rahman|Completed|2026-03-28|09:15 AM|11|Blood test done
-A012|D001|Mei Yee|Pending|2026-03-28|11:45 AM|12|
-
+A012|D001|Mei Yee|Completed|2026-03-28|11:45 AM|12|take 2 day rest
 A013|D002|John Tan|Pending|2026-03-22|11:00 AM|1|
 A014|D002|Mei Ling|Completed|2026-03-22|02:00 PM|2|Consultation complete
 A015|D002|Aina Farah|Completed|2026-03-23|04:30 PM|3|Follow-up not needed
 A016|D002|Hakim Zain|Cancelled|2026-03-24|01:00 PM|4|Patient unavailable
-
 A017|D003|Raj Kumar|Cancelled|2026-03-23|09:30 AM|1|Patient no show
 A018|D003|Nurul Huda|Completed|2026-03-23|01:00 PM|2|Prescribed medication
 A019|D003|Kavin Raj|Pending|2026-03-25|10:00 AM|3|
