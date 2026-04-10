@@ -1,0 +1,5 @@
+D001|Lee Seok Min|0179970218|Cardiologist|Male
+D002|Ethan Brooks|0122230218|General Practitioner|Male
+D003|Hans Lim|0122211122|General Practitioner|Male
+D004|Roy Tang|0129998788|Cardiologist|Male
+D005|Kim Jennie|0123678865|Neurologist|Female
